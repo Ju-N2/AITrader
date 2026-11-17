@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Virtual Environment
+.venv/
+venv/
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Data and Logs
+data/raw/*
+data/processed/*
+logs/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!logs/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local databases
+data/*.db
+data/*.db-*
+
+# Generated analysis outputs
+data/*.csv
+
+# Tool caches
+.ruff_cache/
+.pytest_cache/
+
+# Local backup files
+*.bak
+*.bak[0-9]*
