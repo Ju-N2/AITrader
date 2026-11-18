@@ -1,0 +1,20 @@
+[Unit]
+Description=Create a verified AITrader SQLite backup
+After=local-fs.target
+ConditionPathExists=%h/AITrader/data/aitrader.db
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/AITrader
+ExecStart=%h/AITrader/.venv/bin/python %h/AITrader/scripts/backup_database.py --keep 7
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+ReadWritePaths=%h/AITrader/data/backups

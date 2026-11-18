@@ -1,7 +1,7 @@
 import sqlite3
-from pathlib import Path
-from contextlib import contextmanager
 from collections.abc import Iterable
+from contextlib import contextmanager
+from pathlib import Path
 
 from aitrader.core.exceptions import StorageError
 from aitrader.data.models import Candle
@@ -31,6 +31,9 @@ class SQLiteCandleRepository:
     def initialize(self) -> None:
         try:
             with self._connection() as connection:
+                # WAL lets the read-only dashboard query while the runtime writes.
+                connection.execute("PRAGMA journal_mode = WAL")
+
                 connection.execute("""
                     CREATE TABLE IF NOT EXISTS candles (
                         exchange TEXT NOT NULL,

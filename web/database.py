@@ -1,6 +1,6 @@
-from pathlib import Path
 import json
 import sqlite3
+from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DB_PATH = ROOT_DIR / "data" / "aitrader.db"
@@ -30,7 +30,7 @@ def get_health():
 
     return {
         "status": "ok",
-        "database": str(DB_PATH),
+        "database": "available",
         "tables": sorted(tables),
     }
 

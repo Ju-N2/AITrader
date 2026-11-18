@@ -1,14 +1,19 @@
 import argparse
 import logging
+import signal
+from pathlib import Path
 
-from aitrader.config.settings import get_settings
-from aitrader.data.storage import SQLiteCandleRepository
-from aitrader.exchanges.factory import ExchangeFactory
-from aitrader.notifications import TelegramNotifier
+from aitrader.core.instance_lock import (
+    InstanceAlreadyRunningError,
+    InstanceLock,
+)
 from aitrader.core.runtime import (
     PaperTradingRuntime,
     RuntimeConfig,
 )
+from aitrader.data.storage import SQLiteCandleRepository
+from aitrader.exchanges.factory import ExchangeFactory
+from aitrader.notifications import TelegramNotifier
 
 
 def main():
@@ -57,6 +62,11 @@ def main():
 
     args = parser.parse_args()
 
+    def stop_on_sigterm(signum, frame):
+        raise KeyboardInterrupt
+
+    signal.signal(signal.SIGTERM, stop_on_sigterm)
+
     logging.basicConfig(
         level=logging.INFO,
         format=(
@@ -74,8 +84,6 @@ def main():
             else "BTC/USDT"
         )
 
-    settings = get_settings()
-
     notifier = TelegramNotifier.from_settings()
 
     if not notifier.is_configured:
@@ -88,41 +96,45 @@ def main():
         poll_interval_seconds=args.poll_seconds,
     )
 
-    repository = SQLiteCandleRepository(
-        "data/aitrader.db"
-    )
-
-    client = ExchangeFactory.create(
-        config.exchange
-    )
-
     try:
-        runtime = PaperTradingRuntime(
-            config=config,
-            client=client,
-            repository=repository,
-            notifier=notifier,
-        )
-
-        runtime.bootstrap()
-
-        if args.once:
-            mode = "PAPER" if args.paper else "DRY RUN"
-
-            print(f"\n========== AITrader {mode} ==========")
-
-            result = runtime.run_cycle(
-                paper_mode=args.paper,
+        with InstanceLock(Path("data") / "aitrader.runtime.lock"):
+            repository = SQLiteCandleRepository(
+                "data/aitrader.db"
             )
 
-            print(f"Result: {result}")
-        else:
-            runtime.run_forever(
-                paper_mode=args.paper,
+            client = ExchangeFactory.create(
+                config.exchange
             )
 
-    finally:
-        client.close()
+            try:
+                runtime = PaperTradingRuntime(
+                    config=config,
+                    client=client,
+                    repository=repository,
+                    notifier=notifier,
+                )
+
+                runtime.bootstrap()
+
+                if args.once:
+                    mode = "PAPER" if args.paper else "DRY RUN"
+
+                    print(f"\n========== AITrader {mode} ==========")
+
+                    result = runtime.run_cycle(
+                        paper_mode=args.paper,
+                    )
+
+                    print(f"Result: {result}")
+                else:
+                    runtime.run_forever(
+                        paper_mode=args.paper,
+                    )
+
+            finally:
+                client.close()
+    except InstanceAlreadyRunningError as error:
+        parser.error(str(error))
 
 
 if __name__ == "__main__":

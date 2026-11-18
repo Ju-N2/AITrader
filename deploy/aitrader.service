@@ -1,0 +1,30 @@
+[Unit]
+Description=AITrader paper trading runtime
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+WorkingDirectory=%h/AITrader
+ExecStart=%h/AITrader/.venv/bin/python %h/AITrader/scripts/run_paper_trading.py --paper
+Restart=on-failure
+RestartSec=15
+TimeoutStopSec=30
+KillSignal=SIGTERM
+Environment=PYTHONUNBUFFERED=1
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+ReadWritePaths=%h/AITrader/data %h/AITrader/logs
+
+[Install]
+WantedBy=default.target

@@ -1,7 +1,6 @@
 import logging
 import sqlite3
 import time
-
 from bisect import bisect_right
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -29,7 +28,6 @@ from aitrader.risk import (
 from aitrader.strategy.models import MarketBias
 from aitrader.strategy.multi_timeframe import MultiTimeframeEngine
 from aitrader.strategy.technical import TechnicalTrendStrategy
-
 
 TIMEFRAMES = {
     "1m": 60_000,
@@ -916,6 +914,7 @@ class PaperTradingRuntime:
 
     def run_forever(self, paper_mode=False):
         mode = "PAPER TRADING" if paper_mode else "ANALYSIS ONLY"
+        consecutive_failures = 0
 
         self.logger.info(
             "Runtime started | mode=%s exchange=%s symbol=%s",
@@ -931,12 +930,14 @@ class PaperTradingRuntime:
                 )
 
                 self.logger.info("Runtime cycle: %s", result)
+                consecutive_failures = 0
 
             except KeyboardInterrupt:
                 self.logger.info("Runtime stopped by user")
                 break
 
             except Exception as exc:
+                consecutive_failures += 1
                 self.logger.exception("Runtime cycle failed")
 
                 if self.trading_service.notifier is not None:
@@ -945,6 +946,16 @@ class PaperTradingRuntime:
                         type(exc).__name__,
                     )
 
-            time.sleep(
-                self.config.poll_interval_seconds
-            )
+                delay = min(
+                    self.config.poll_interval_seconds
+                    * (2 ** min(consecutive_failures, 10)),
+                    300.0,
+                )
+            else:
+                delay = self.config.poll_interval_seconds
+
+            try:
+                time.sleep(delay)
+            except KeyboardInterrupt:
+                self.logger.info("Runtime stopped by user")
+                break

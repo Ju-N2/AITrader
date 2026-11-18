@@ -35,6 +35,8 @@ Thumbs.db
 # Local databases
 data/*.db
 data/*.db-*
+data/backups/
+data/aitrader.runtime.lock
 
 # Generated analysis outputs
 data/*.csv

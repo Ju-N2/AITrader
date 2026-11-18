@@ -1,0 +1,27 @@
+[Unit]
+Description=AITrader read-only local dashboard
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/AITrader
+ExecStart=%h/AITrader/.venv/bin/uvicorn web.server:app --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=15
+TimeoutStopSec=15
+KillSignal=SIGTERM
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+[Install]
+WantedBy=default.target
