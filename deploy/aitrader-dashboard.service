@@ -1,11 +1,11 @@
 [Unit]
-Description=AITrader read-only local dashboard
+Description=AITrader read-only Tailscale dashboard
 After=network.target
 
 [Service]
 Type=simple
 WorkingDirectory=%h/AITrader
-ExecStart=%h/AITrader/.venv/bin/uvicorn web.server:app --host 127.0.0.1 --port 8000
+ExecStart=%h/AITrader/.venv/bin/uvicorn web.server:app --host 100.73.194.104 --port 8000
 Restart=on-failure
 RestartSec=15
 TimeoutStopSec=15
