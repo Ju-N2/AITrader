@@ -46,3 +46,6 @@ data/*.csv
 # Local backup files
 *.bak
 *.bak[0-9]*
+
+# Runtime snapshots
+data/latest_ai_analysis.json

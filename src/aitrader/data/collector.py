@@ -48,6 +48,10 @@ class MarketDataCollector:
             ) from error
 
         if not rows:
+            # An incremental request may legitimately have no new candles.
+            if since is not None:
+                return []
+
             raise DataError("No OHLCV data received")
 
         candles = []

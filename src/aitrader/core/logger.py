@@ -11,6 +11,9 @@ def setup_logger(name: str = "aitrader") -> logging.Logger:
     logger = logging.getLogger(name)
     logger.setLevel(settings.log_level.upper())
 
+    # Prevent duplicate console output through the root logger.
+    logger.propagate = False
+
     if logger.handlers:
         return logger
 

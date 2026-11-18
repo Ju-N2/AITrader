@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AITrader Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo">AI<span>TRADER</span></div>
+
+        <nav>
+            <a class="active" href="/">Dashboard</a>
+            <a href="#ai-analysis">AI Analysis</a>
+            <a href="#market">Market</a>
+            <a href="#positions">Positions</a>
+            <a href="#system">System</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <span class="status-dot"></span>
+            PAPER TRADING
+            <small>Dashboard v0.1</small>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <h1>Dashboard</h1>
+                <p>AITrader · Automated Trading System</p>
+            </div>
+            <div class="connection">
+                <span class="status-dot" id="connection-dot"></span>
+                <span id="connection-text">Connecting...</span>
+            </div>
+        </header>
+
+        <section class="market-heading" id="market">
+            <div>
+                <span class="eyebrow">MARKET OVERVIEW</span>
+                <h2>BTC <span>/ USDT</span></h2>
+                <small>Binance Spot · 1 Minute</small>
+            </div>
+            <div class="price-box">
+                <span class="eyebrow">LATEST CLOSE</span>
+                <div class="price" id="current-price">Loading...</div>
+                <div class="muted" id="candle-time">Waiting for data</div>
+            </div>
+        </section>
+
+        <section class="cards">
+            <article class="card">
+                <span class="eyebrow">OPEN POSITIONS</span>
+                <strong id="open-positions">--</strong>
+                <small>Currently active</small>
+            </article>
+
+            <article class="card">
+                <span class="eyebrow">REALIZED PNL</span>
+                <strong id="realized-pnl">--</strong>
+                <small>Accumulated</small>
+            </article>
+
+            <article class="card">
+                <span class="eyebrow">ACCOUNT BALANCE</span>
+                <strong class="muted">Not connected</strong>
+                <small>Exchange balance unavailable</small>
+            </article>
+
+            <article class="card">
+                <span class="eyebrow">TOTAL EQUITY</span>
+                <strong class="muted">Not connected</strong>
+                <small>Awaiting account integration</small>
+            </article>
+        </section>
+
+
+        <section class="panel ai-panel" id="ai-analysis">
+            <div class="panel-header">
+                <div>
+                    <h3>AI Market Analysis</h3>
+                    <p>Multi-agent analysis engine</p>
+                </div>
+                <span class="badge" id="ai-status">NO DATA</span>
+            </div>
+
+            <div id="ai-no-data" class="ai-no-data">
+                <strong>NO DATA</strong>
+                <p>Waiting for the next AI analysis result.</p>
+            </div>
+
+            <div id="ai-content" hidden>
+                <div class="ai-overview">
+                    <div class="ai-bias-box">
+                        <span class="eyebrow">AI MARKET BIAS</span>
+                        <strong id="ai-bias">--</strong>
+                        <small id="ai-market">--</small>
+                    </div>
+
+                    <div class="ai-metric">
+                        <span class="eyebrow">AI SCORE</span>
+                        <strong id="ai-score">--</strong>
+                    </div>
+
+                    <div class="ai-metric">
+                        <span class="eyebrow">CONFIDENCE</span>
+                        <strong id="ai-confidence">--</strong>
+                    </div>
+
+                    <div class="ai-metric">
+                        <span class="eyebrow">AGREEMENT</span>
+                        <strong id="ai-agreement">--</strong>
+                    </div>
+                </div>
+
+                <div class="ai-meta">
+                    <div>
+                        <span>Market Regime</span>
+                        <strong id="ai-regime">--</strong>
+                    </div>
+                    <div>
+                        <span>Timeframe</span>
+                        <strong id="ai-timeframe">--</strong>
+                    </div>
+                    <div>
+                        <span>Last Analysis</span>
+                        <strong id="ai-timestamp">--</strong>
+                    </div>
+                </div>
+
+                <div class="ai-section-title">AGENT REPORTS</div>
+                <div id="ai-agents" class="ai-agents"></div>
+
+                <div class="ai-section-title">AI REASONING</div>
+                <ul id="ai-reasons" class="ai-reasons"></ul>
+            </div>
+        </section>
+
+        <section class="panel chart-panel">
+    <div class="panel-header chart-header">
+        <div>
+            <h3>Market Chart</h3>
+            <p id="chart-subtitle">BTC/USDT · 1-minute technical analysis</p>
+        </div>
+
+        <div class="timeframe-switch" role="group" aria-label="Chart timeframe">
+            <button class="timeframe-button active" data-timeframe="1m">1m</button>
+            <button class="timeframe-button" data-timeframe="5m">5m</button>
+            <button class="timeframe-button" data-timeframe="15m">15m</button>
+            <button class="timeframe-button" data-timeframe="1h">1h</button>
+            <button class="timeframe-button" data-timeframe="4h">4h</button>
+        </div>
+    </div>
+
+    <div class="indicator-toolbar">
+        <span class="toolbar-label">OVERLAYS</span>
+        <button class="indicator-toggle active" data-indicator="ema12" aria-pressed="true">
+            <i class="indicator-line ema12"></i> EMA 12
+        </button>
+        <button class="indicator-toggle active" data-indicator="ema26" aria-pressed="true">
+            <i class="indicator-line ema26"></i> EMA 26
+        </button>
+        <button class="indicator-toggle" data-indicator="sma20" aria-pressed="false">
+            <i class="indicator-line sma20"></i> SMA 20
+        </button>
+        <button class="indicator-toggle" data-indicator="sma50" aria-pressed="false">
+            <i class="indicator-line sma50"></i> SMA 50
+        </button>
+    </div>
+
+    <div class="chart-legend">
+        <span><i class="legend-dot bullish"></i> Bullish</span>
+        <span><i class="legend-dot bearish"></i> Bearish</span>
+        <span class="chart-volume-label">Volume</span>
+    </div>
+
+    <div class="chart-container" id="price-chart-wrap">
+        <canvas id="price-chart"></canvas>
+        <div id="chart-tooltip" class="chart-tooltip" hidden></div>
+    </div>
+
+    <div class="technical-panel">
+        <div class="technical-heading">
+            <div>
+                <strong>RSI (14)</strong>
+                <span>Relative Strength Index</span>
+            </div>
+            <span class="technical-hint">OVERBOUGHT 70 · OVERSOLD 30</span>
+        </div>
+        <canvas id="rsi-chart" class="indicator-chart"></canvas>
+    </div>
+
+    <div class="technical-panel">
+        <div class="technical-heading">
+            <div>
+                <strong>MACD (12, 26, 9)</strong>
+                <span>Moving Average Convergence Divergence</span>
+            </div>
+            <span class="technical-hint">MACD · SIGNAL · HISTOGRAM</span>
+        </div>
+        <canvas id="macd-chart" class="indicator-chart macd-chart"></canvas>
+    </div>
+
+    <div class="chart-footer">
+        <span id="chart-count">Loading candles...</span>
+        <span id="current-timeframe-label">1M · OHLC + VOLUME</span>
+        <span>Source: Local SQLite</span>
+    </div>
+</section>
+
+<section class="panel" id="positions">
+            <div class="panel-header">
+                <div>
+                    <h3>Open Positions</h3>
+                    <p>Currently active positions</p>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>SYMBOL</th>
+                            <th>SIDE</th>
+                            <th>ENTRY PRICE</th>
+                            <th>QUANTITY</th>
+                            <th>STOP PRICE</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="positions-body">
+                        <tr><td colspan="6" class="empty">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel" id="system">
+            <div class="panel-header">
+                <div>
+                    <h3>System Status</h3>
+                    <p>Database and API connection</p>
+                </div>
+            </div>
+            <div class="system-info">
+                <div><span>API Server</span><strong id="api-status">Checking...</strong></div>
+                <div><span>Database</span><strong id="db-status">Checking...</strong></div>
+                <div><span>Last Update</span><strong id="last-update">--</strong></div>
+            </div>
+        </section>
+
+        <footer>AITrader · Local Trading Dashboard</footer>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

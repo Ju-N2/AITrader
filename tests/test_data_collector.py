@@ -63,3 +63,19 @@ def test_invalid_limit():
 
     with pytest.raises(DataError):
         collector.fetch_ohlcv("BTC/USDT", limit=0)
+
+
+def test_empty_incremental_response_returns_empty_list():
+    class EmptyExchange:
+        def fetch_ohlcv(self, symbol, timeframe, limit, since=None):
+            return []
+
+    collector = MarketDataCollector(EmptyExchange(), "binance")
+
+    candles = collector.fetch_ohlcv(
+        "BTC/USDT",
+        timeframe="1m",
+        since=123456789,
+    )
+
+    assert candles == []

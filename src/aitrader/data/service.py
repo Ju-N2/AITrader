@@ -21,11 +21,13 @@ class MarketDataService:
         symbol: str,
         timeframe: str = "1h",
         limit: int = 100,
+        since: int | None = None,
     ) -> int:
         candles = self.collector.fetch_ohlcv(
             symbol=symbol,
             timeframe=timeframe,
             limit=limit,
+            since=since,
         )
 
         saved_count = self.repository.save_candles(candles)
